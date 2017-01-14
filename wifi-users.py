@@ -32,6 +32,7 @@ def main(args):
         eprint('Couldn\'t get current wireless SSID.')
         raise
 
+    network_macs = set()
     try:
         gw = netifaces.gateways()['default'][netifaces.AF_INET]
         iface = gw[1]
@@ -39,16 +40,15 @@ def main(args):
         gw_arp = gw_arp.decode('utf-8')
         gw_mac = EUI(re.search(' at (.+) on ', gw_arp).group(1))
         gw_mac.dialect = mac_unix_expanded
-        gateways = set([gw_mac])
+        network_macs.add([gw_mac])
     except KeyError:
         eprint('No gateway is available: {}'.format(netifaces.gateways()))
         return
     except:
         eprint('Error getting gateway mac address.')
-        raise
 
     try:
-        eprint('Collecting {} packets, looking for {} ({})...'.format(args.packets, ssid, gw_mac))
+        eprint('Collecting {} packets, looking for {}...'.format(args.packets, ssid))
         cmd = 'tcpdump -i {} -Ile -c {}'.format(iface, args.packets)
         tcpdump_output = subprocess.check_output(cmd.split(' '), stderr=open(os.devnull, 'w'))
     except subprocess.CalledProcessError:
@@ -61,8 +61,7 @@ def main(args):
 
     mac_re = re.compile('(SA|DA|BSSID):(([\dA-F]{2}:){5}[\dA-F]{2})', re.I)
     length_re = re.compile(' length (\d+)')
-    bssids = set()
-    clients = set()
+    client_macs = set()
     data_totals = defaultdict(int)
 
     # find BSSIDs for SSID
@@ -72,7 +71,7 @@ def main(args):
             bssid_matches = bssid_re.search(line)
             if bssid_matches:
                 bssid = bssid_matches.group(1)
-                bssids.add(EUI(bssid))
+                network_macs.add(EUI(bssid))
 
     # count all data packets
     for line in tcpdump_output.splitlines(): 
@@ -83,13 +82,12 @@ def main(args):
             mac_matches = mac_re.findall(line)
             if mac_matches:
                 macs = set([EUI(match[1]) for match in mac_matches])
-                leftover = macs - gateways - bssids
+                print(macs)
+                leftover = macs - network_macs
                 if len(leftover) < len(macs):
                     for mac in leftover:
                         data_totals[mac] += length
-                        clients.add(mac)
-
-    print(clients)
+                        client_macs.add(mac)
 
     totals_sorted = sorted(data_totals.items(), key=lambda x: x[1], reverse=True)
 

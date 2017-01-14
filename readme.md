@@ -19,7 +19,7 @@ Unfotunately, most systems track MAC addresses instead of cookies. This means yo
 
 ## How to get free access
 
-If you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
+If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
 
 To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Then run the command `sudo chmod o+r /dev/bpf*` to make sure you can sniff wireless data. Then run the command `python wifi-users.py`. You should see something like this after 10 seconds:
 
