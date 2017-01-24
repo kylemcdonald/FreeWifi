@@ -21,10 +21,12 @@ Unfotunately, most systems track MAC addresses instead of cookies. This means yo
 
 If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
 
-To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Then run the command `sudo chmod o+r /dev/bpf*` to make sure you can sniff wireless data. Then run the command `python wifi-users.py`. You should see something like this after 10 seconds:
+To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Then run the command `sudo chmod o+r /dev/bpf*` to make sure you can sniff wireless data. Then run the command `python wifi-users.py`. You should see something like this after 5-30 seconds:
 
 ```
-Collecting 1000 packets, looking for SSID (74:4c:17:ac:b3:13)...
+SSID: gogoinflight
+Gateway: 00:e0:4b:22:96:d9
+100%|██████████████████████████| 1000/1000 [00:46<00:00, 21.46it/s]
 Total of 5 user(s):
 27:35:96:a8:66:7f	6359 bytes
 36:fe:83:9c:35:eb	9605 bytes
@@ -33,7 +35,7 @@ Total of 5 user(s):
 0a:4f:b2:b8:e8:56	71541 bytes
 ```
 
-If there isn't much traffic on the network, it might take longer. Finally, we want to spoof one of these MAC addresses. For example: `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi`. After running that command, try to access the Internet. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network.
+If there isn't much traffic on the network, it might take longer. If it's taking too long, type `CTRL-C` to cancel the sniffing and print whatever results are available. Finally, we want to spoof one of these MAC addresses. For example: `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi`. After running that command, try to access the Internet. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network.
 
 ### How it works
 

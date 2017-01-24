@@ -2,3 +2,4 @@ netifaces
 netaddr
 wireless
 SpoofMAC
+tqdm
