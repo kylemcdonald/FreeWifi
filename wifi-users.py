@@ -39,8 +39,7 @@ def main(args):
         gw_arp = subprocess.check_output(['arp', '-n', str(gw[0])])
         gw_arp = gw_arp.decode('utf-8')
         gw_mac = EUI(re.search(' at (.+) on ', gw_arp).group(1))
-        gw_mac.dialect = mac_unix_expanded
-        network_macs.add([gw_mac])
+        network_macs.add(gw_mac)
     except KeyError:
         eprint('No gateway is available: {}'.format(netifaces.gateways()))
         return
@@ -71,7 +70,8 @@ def main(args):
             bssid_matches = bssid_re.search(line)
             if bssid_matches:
                 bssid = bssid_matches.group(1)
-                network_macs.add(EUI(bssid))
+                if not 'Broadcast' in bssid:
+                    network_macs.add(EUI(bssid))
 
     # count all data packets
     for line in tcpdump_output.splitlines(): 
@@ -82,7 +82,6 @@ def main(args):
             mac_matches = mac_re.findall(line)
             if mac_matches:
                 macs = set([EUI(match[1]) for match in mac_matches])
-                print(macs)
                 leftover = macs - network_macs
                 if len(leftover) < len(macs):
                     for mac in leftover:
@@ -91,7 +90,7 @@ def main(args):
 
     totals_sorted = sorted(data_totals.items(), key=lambda x: x[1], reverse=True)
 
-    eprint('Total of {} user(s):'.format(len(totals_sorted)))
+    eprint('Total of {} user(s)'.format(len(totals_sorted)))
 
     for mac, total in reversed(totals_sorted[:args.results]):
         mac.dialect = mac_unix_expanded
