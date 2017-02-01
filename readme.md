@@ -2,6 +2,8 @@
 
 This short tutorial describes a few methods for gaining access to the Internet, [a basic human right](https://en.wikipedia.org/wiki/Right_to_Internet_access#2011:_UN_Special_Rapporteur_report), from public wireless networks.
 
+This tutorial has been tested on Mac, should work on Linux, and hasn't been tested on Windows.
+
 ## Preparation
 
 Make sure you do this step *before* you are stuck without Internet access.
@@ -13,15 +15,22 @@ $ cd FreeWifi && pip install -r requirements.txt
 
 ## How to get additional time
 
-If you had free internet access but your time has run out, the first thing to try is open an incognito/private window. This will temporarily clear any cookies that may have been used for tracking how much time you spent, and might allow you to log into the wireless portal again.
+If you had free internet access but your time has run out, the first thing to try is open an incognito/private window. Here are instructions for a few browsers:
 
-Unfotunately, most systems track MAC addresses instead of cookies. This means you need to pick a new MAC address to get additional time. The `spoof-mac` command line utility makes this easy with `sudo spoof-mac randomize Wi-Fi`. If doesn't work, try running `spoof-mac list --wifi` to check what the name of your wireless device is first. After running that command, try logging into the wireless portal again. When you're done using the Internet, run `sudo spoof-mac reset Wi-Fi` to reset your MAC address.
+* [Chrome](https://support.google.com/chrome/answer/95464?source=gsearch&hl=en) (mobile and desktop)
+* [Safari for iOS](https://support.apple.com/en-us/HT203036)
+* [Safari for Mac](https://support.apple.com/kb/ph21413?locale=en_US)
+* [Microsoft Edge](https://support.microsoft.com/en-us/instantanswers/34b9a3a6-68bc-510b-2a9e-833107495ee5/browse-inprivate-in-microsoft-edge)
+
+An incognito/private window will temporarily clear any cookies that may have been used for tracking how much time you spent online, making you look like a "new user" and allowing you to log into the wireless portal again.
+
+Unfotunately, most systems track MAC addresses instead of cookies. A MAC address is a unique identifier assigned to every network interface. This means you need to get a new MAC address to get additional time. Fortunately, MAC addresses can be changed in software, without swapping the hardware. The `spoof-mac` command line utility makes this easy by entering `sudo spoof-mac randomize Wi-Fi`. If the command fails to run, try entering `spoof-mac list --wifi` to check what the name of your wireless device is first, and use that manually. After randomizing your MAC, try logging into the wireless portal again. When you're done using the Internet, run `sudo spoof-mac reset Wi-Fi` to reset your MAC address.
 
 ## How to get free access
 
 If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
 
-To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Then run the command `sudo chmod o+r /dev/bpf*` to make sure you can sniff wireless data. Then run the command `python wifi-users.py`. You should see something like this after 5-30 seconds:
+To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you only need to do this again if you restart your computer). Then run the command `python wifi-users.py`. You should see a progress bar immediately:
 
 ```
 SSID: gogoinflight
@@ -35,8 +44,8 @@ Total of 5 user(s):
 0a:4f:b2:b8:e8:56	71541 bytes
 ```
 
-If there isn't much traffic on the network, it might take longer. If it's taking too long, type `CTRL-C` to cancel the sniffing and print whatever results are available. Finally, we want to spoof one of these MAC addresses. For example: `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi`. After running that command, try to access the Internet. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network.
+If there isn't much traffic on the network, it might take longer. If it's taking too long, type `CTRL-C` to cancel the sniffing and print whatever results are available. Finally, we want to spoof one of these MAC addresses. For example, in this case we would enter `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi` to try spoofing the address with the most traffic (they probably have a connection). After running that command, try to access the Internet. If you don't have a connection, try the next MAC in the list. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network.
 
 ### How it works
 
-`wifi-users.py` uses `tcpdump` to collect wireless packets. Then we look through these packets for any hints of the MAC address (BSSID) of our wireless network. Finally, we look for data packets that mention a network BSSID, or the network gateway, and add up the length of the packet to a total for that user's MAC. We sort the user's MAC by the total data and take the top 10.
+`wifi-users.py` uses `tcpdump` to collect wireless packets. Then we look through these packets for any hints of the MAC address (BSSID) of our wireless network. Finally, we look for data packets that mention a user's MAC as well as the network BSSID (or the network gateway), and take note of that MAC using some amount of data. Then we sort the user's MACs by the total amount of data and print them out.
