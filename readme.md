@@ -51,3 +51,5 @@ If there isn't much traffic on the network, it might take longer. If it's taking
 `wifi-users.py` uses `tcpdump` to collect wireless packets. Then we look through these packets for any hints of the MAC address (BSSID) of our wireless network. Finally, we look for data packets that mention a user's MAC as well as the network BSSID (or the network gateway), and take note of that MAC using some amount of data. Then we sort the user's MACs by the total amount of data and print them out.
 
 Instead of sniffing wireless traffic, in some situations you can also use the command `arp -a` to get a list of MAC addresses of devices on the wireless network. Then you can either use `spoof-mac` to copy the address, or use `ifconfig` directly on Linux and OSX. For the specifics of using `ifconfig` look at the implementations of `set_interface_mac` inside [SpoofMac's interfaces.py](https://github.com/feross/SpoofMAC/blob/master/spoofmac/interface.py).
+
+*This repository is dedicated to Lauren McCarthy, who has taught me the most about the art of getting a good deal.*
