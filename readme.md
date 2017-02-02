@@ -26,6 +26,8 @@ An incognito/private window will temporarily clear any cookies that may have bee
 
 Unfotunately, most systems track MAC addresses instead of cookies. A MAC address is a unique identifier assigned to every network interface. This means you need to get a new MAC address to get additional time. Fortunately, MAC addresses can be changed in software, without swapping the hardware. The `spoof-mac` command line utility makes this easy by entering `sudo spoof-mac randomize Wi-Fi`. If the command fails to run, try entering `spoof-mac list --wifi` to check what the name of your wireless device is first, and use that manually. After randomizing your MAC, try logging into the wireless portal again. When you're done using the Internet, run `sudo spoof-mac reset Wi-Fi` to reset your MAC address.
 
+Note that MAC address spoofing may be interpreted as an illegal activity depending on why you do it. In some cases it is certainly not illegal: recent mobile operating systems like iOS 8+ and Android 6+ automatically randomize their MAC address when searching for wireless networks to avoid being tracked. But when [Aaron Swartz liberated JSTOR](https://en.wikipedia.org/wiki/MAC_spoofing#Controversy), MAC address spoofing was claimed as a signal of intention to commit a crime.
+
 ## How to get free access
 
 If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
@@ -33,7 +35,7 @@ If the network is open, but you can't get access for some reason, you can also t
 To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you only need to do this again if you restart your computer). Then run the command `python wifi-users.py`. You should see a progress bar immediately:
 
 ```
-SSID: gogoinflight
+SSID: nonoinflight
 Gateway: 00:e0:4b:22:96:d9
 100%|██████████████████████████| 1000/1000 [00:46<00:00, 21.46it/s]
 Total of 5 user(s):
