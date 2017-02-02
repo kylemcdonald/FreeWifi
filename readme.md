@@ -46,7 +46,7 @@ Total of 5 user(s):
 0a:4f:b2:b8:e8:56	71541 bytes
 ```
 
-If there isn't much traffic on the network, it might take longer. If it's taking too long, type `CTRL-C` to cancel the sniffing and print whatever results are available. Finally, we want to spoof one of these MAC addresses. For example, in this case we would enter `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi` to try spoofing the address with the most traffic (they probably have a connection). After running that command, try to access the Internet. If you don't have a connection, try the next MAC in the list. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network.
+If there isn't much traffic on the network, it might take longer. If it's taking too long, type `CTRL-C` to cancel the sniffing and print whatever results are available. Finally, we want to spoof one of these MAC addresses. For example, in this case we would enter `sudo spoof-mac set 0a:4f:b2:b8:e8:56 Wi-Fi` to try spoofing the address with the most traffic (they probably have a connection). After running that command, try to access the Internet. If you don't have a connection, try the next MAC in the list. If your Internet connection drops out while using this MAC address, try disconnecting and reconnecting to the wireless network. Note that the original user of the MAC you copied may experience these same connection drop outs if you are both actively using the network.
 
 ### How it works
 
