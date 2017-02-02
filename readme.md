@@ -24,7 +24,7 @@ If you had free internet access but your time has run out, the first thing to tr
 
 An incognito/private window will temporarily clear any cookies that may have been used for tracking how much time you spent online, making you look like a "new user" and allowing you to log into the wireless portal again.
 
-Unfotunately, most systems track MAC addresses instead of cookies. A MAC address is a unique identifier assigned to every network interface. This means you need to get a new MAC address to get additional time. Fortunately, MAC addresses can be changed in software, without swapping the hardware. The `spoof-mac` command line utility makes this easy by entering `sudo spoof-mac randomize Wi-Fi`. If the command fails to run, try entering `spoof-mac list --wifi` to check what the name of your wireless device is first, and use that manually. After randomizing your MAC, try logging into the wireless portal again. When you're done using the Internet, run `sudo spoof-mac reset Wi-Fi` to reset your MAC address.
+Unfortunately, most systems track MAC addresses instead of cookies. A MAC address is a unique identifier assigned to every network interface. This means you need to get a new MAC address to get additional time. Fortunately, MAC addresses can be changed in software, without swapping the hardware. The `spoof-mac` command line utility makes this easy by entering `sudo spoof-mac randomize Wi-Fi`. If the command fails to run, try entering `spoof-mac list --wifi` to check what the name of your wireless device is first, and use that manually. After randomizing your MAC, try logging into the wireless portal again. When you're done using the Internet, run `sudo spoof-mac reset Wi-Fi` to reset your MAC address.
 
 ## How to get free access
 
