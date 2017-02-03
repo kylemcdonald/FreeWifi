@@ -7,30 +7,33 @@ from netaddr import EUI, mac_unix_expanded
 from wireless import Wireless
 from tqdm import tqdm
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
 def run_process(cmd, err=False):
     err_pipe = subprocess.STDOUT if err else open(os.devnull, 'w')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=err_pipe)
-    while(True):
+    while (True):
         retcode = p.poll()
         line = p.stdout.readline()
         yield line
-        if(retcode is not None):
+        if (retcode is not None):
             break
+
 
 def main(args):
     parser = argparse.ArgumentParser(
         description='Find active users on the current wireless network.')
     parser.add_argument('-p', '--packets',
-        default=1000,
-        type=int,
-        help='How many packets to capture.')
+                        default=1000,
+                        type=int,
+                        help='How many packets to capture.')
     parser.add_argument('-r', '--results',
-        default=None,
-        type=int,
-        help='How many results to show.')
+                        default=None,
+                        type=int,
+                        help='How many results to show.')
     args = parser.parse_args()
 
     try:
@@ -113,8 +116,10 @@ def main(args):
         if total > 0:
             print('{}\t{} bytes'.format(mac, total))
 
+
 if __name__ == '__main__':
     from sys import argv
+
     try:
         main(argv)
     except KeyboardInterrupt:
