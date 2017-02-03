@@ -1,11 +1,17 @@
 from __future__ import print_function
-import subprocess, re, sys, argparse, os
+import subprocess
+import re
+import sys
+import argparse
+import os
 from collections import defaultdict
 
 import netifaces
 from netaddr import EUI, mac_unix_expanded
 from wireless import Wireless
 from tqdm import tqdm
+
+NO_SSID = 'No SSID is currently available. Connect to the network first.'
 
 
 def eprint(*args, **kwargs):
@@ -40,7 +46,7 @@ def main(args):
         wireless = Wireless()
         ssid = wireless.current()
         if ssid is None:
-            eprint('No SSID is currently available. Connect to the network first.')
+            eprint(NO_SSID)
             return
         eprint('SSID: {}'.format(ssid))
     except:
@@ -64,8 +70,6 @@ def main(args):
         eprint('Error getting gateway mac address.')
 
     bssid_re = re.compile(' BSSID:(\S+) ')
-    da_re = re.compile(' DA:(\S+) ')
-    sa_re = re.compile(' SA:(\S+) ')
 
     mac_re = re.compile('(SA|DA|BSSID):(([\dA-F]{2}:){5}[\dA-F]{2})', re.I)
     length_re = re.compile(' length (\d+)')
@@ -75,7 +79,9 @@ def main(args):
     cmd = 'tcpdump -i {} -Ile -c {}'.format(iface, args.packets).split()
     try:
         bar_format = '{n_fmt}/{total_fmt} {bar} {remaining}'
-        for line in tqdm(run_process(cmd), total=args.packets, bar_format=bar_format):
+        for line in tqdm(run_process(cmd),
+                         total=args.packets,
+                         bar_format=bar_format):
             line = line.decode('utf-8')
 
             # find BSSID for SSID
@@ -83,7 +89,7 @@ def main(args):
                 bssid_matches = bssid_re.search(line)
                 if bssid_matches:
                     bssid = bssid_matches.group(1)
-                    if not 'Broadcast' in bssid:
+                    if 'Broadcast' not in bssid:
                         network_macs.add(EUI(bssid))
 
             # count data packets
@@ -105,9 +111,9 @@ def main(args):
     except KeyboardInterrupt:
         pass
 
-    print()
-
-    totals_sorted = sorted(data_totals.items(), key=lambda x: x[1], reverse=True)
+    totals_sorted = sorted(data_totals.items(),
+                           key=lambda x: x[1],
+                           reverse=True)
 
     eprint('Total of {} user(s)'.format(len(totals_sorted)))
 
