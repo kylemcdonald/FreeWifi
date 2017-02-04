@@ -124,7 +124,7 @@ def main(args):
                             client_macs.add(mac)
 
         if progress.n < progress.total:
-            eprint('Sniffing finished early, try running this script with `sudo`.')
+            eprint('Sniffing finished early.')
 
     except subprocess.CalledProcessError:
         eprint('Error collecting packets.')
