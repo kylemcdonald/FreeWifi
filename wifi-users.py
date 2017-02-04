@@ -21,11 +21,11 @@ def eprint(*args, **kwargs):
 def run_process(cmd, err=False):
     err_pipe = subprocess.STDOUT if err else open(os.devnull, 'w')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=err_pipe)
-    while (True):
+    while True:
         retcode = p.poll()
         line = p.stdout.readline()
         yield line
-        if (retcode is not None):
+        if retcode is not None:
             break
 
 
