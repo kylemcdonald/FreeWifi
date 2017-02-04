@@ -76,7 +76,7 @@ def main(args):
     client_macs = set()
     data_totals = defaultdict(int)
 
-    cmd = 'tcpdump -i {} -Ile -c {}'.format(iface, args.packets).split()
+    cmd = 'tcpdump -i {} -Ile -c {} -s 0'.format(iface, args.packets).split()
     try:
         bar_format = '{n_fmt}/{total_fmt} {bar} {remaining}'
         for line in tqdm(run_process(cmd),
