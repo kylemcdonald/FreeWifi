@@ -6,7 +6,10 @@ This tutorial has been tested on Mac, should work on Linux, and hasn't been test
 
 ## Preparation
 
-Make sure you do this step *before* you are stuck without Internet access.
+Make sure you do this step *before* you are stuck without Internet access:
+
+1. Install [Python pip](https://pip.pypa.io/en/stable/installing/)
+2. Make a copy of this repository and install dependencies for the script.
 
 ```
 $ git clone https://github.com/kylemcdonald/FreeWifi
