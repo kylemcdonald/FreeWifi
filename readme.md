@@ -6,7 +6,10 @@ This tutorial has been tested on Mac, should work on Linux, and hasn't been test
 
 ## Preparation
 
-Make sure you do this step *before* you are stuck without Internet access.
+Make sure you do this step *before* you are stuck without Internet access:
+
+1. Install [Python pip](https://pip.pypa.io/en/stable/installing/)
+2. Make a copy of this repository and install dependencies for the script.
 
 ```
 $ git clone https://github.com/kylemcdonald/FreeWifi
@@ -32,11 +35,15 @@ Note that MAC address spoofing may be interpreted as an illegal activity dependi
 
 If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
 
-To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. Run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you only need to do this again if you restart your computer). Then run the command `python wifi-users.py`. You should see a progress bar immediately:
+To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. First, on Mac OS run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you need to do this again if you restart your computer). Then run the command `python wifi-users.py`. You should see a progress bar immediately:
 
 ```
+Available interfaces: en0
+Interface: en0
 SSID: nonoinflight
-Gateway: 00:e0:4b:22:96:d9
+Available gateways: en0
+Gateway IP: 10.0.1.1
+Gateway MAC: 00:e0:4b:22:96:d9
 100%|██████████████████████████| 1000/1000 [00:46<00:00, 21.46it/s]
 Total of 5 user(s):
 27:35:96:a8:66:7f	6359 bytes

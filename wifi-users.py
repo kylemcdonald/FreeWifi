@@ -12,7 +12,8 @@ from wireless import Wireless
 from tqdm import tqdm
 
 NO_SSID = 'No SSID is currently available. Connect to the network first.'
-
+NO_WIRELESS = 'Error getting wireless interface.'
+NO_GATEWAY_MAC = 'Error getting gateway MAC address.'
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -36,6 +37,10 @@ def main(args):
                         default=1000,
                         type=int,
                         help='How many packets to capture.')
+    parser.add_argument('-i', '--interface',
+                        default=None,
+                        type=str,
+                        help='Which wireless interface to use.')
     parser.add_argument('-r', '--results',
                         default=None,
                         type=int,
@@ -44,44 +49,57 @@ def main(args):
 
     try:
         wireless = Wireless()
+
+        ifaces = wireless.interfaces()
+        eprint('Available interfaces: {}'.format(', '.join(ifaces)))
+        iface = args.interface if args.interface else ifaces[-1]
+        eprint('Interface: {}'.format(iface))
+
         ssid = wireless.current()
         if ssid is None:
             eprint(NO_SSID)
             return
         eprint('SSID: {}'.format(ssid))
     except:
-        eprint('Couldn\'t get current wireless SSID.')
+        eprint(NO_WIRELESS)
         raise
 
+    mac_re_str = '([\dA-F]{2}:){5}[\dA-F]{2}'
+    mac_re = re.compile(mac_re_str, re.I)
     network_macs = set()
     try:
-        gw = netifaces.gateways()['default'][netifaces.AF_INET]
-        iface = gw[1]
-        gw_arp = subprocess.check_output(['arp', '-n', str(gw[0])])
+        gws = netifaces.gateways()[netifaces.AF_INET]
+        gw_ifaces = ', '.join([gw[1] for gw in gws])
+        eprint('Available gateways: {}'.format(gw_ifaces))
+        gw_ip = next(gw[0] for gw in gws if gw[1] == iface)
+        eprint('Gateway IP: {}'.format(gw_ip))
+        gw_arp = subprocess.check_output(['arp', '-n', str(gw_ip)])
         gw_arp = gw_arp.decode('utf-8')
-        gw_mac = EUI(re.search(' at (.+) on ', gw_arp).group(1))
+        gw_mac = EUI(mac_re.search(gw_arp).group(0))
         gw_mac.dialect = mac_unix_expanded
         network_macs.add(gw_mac)
-        eprint('Gateway: {}'.format(gw_mac))
+        eprint('Gateway MAC: {}'.format(gw_mac))
+    except StopIteration:
+        eprint('No gateway for {}'.format(iface))
     except KeyError:
-        eprint('No gateway is available: {}'.format(netifaces.gateways()))
-        return
+        eprint('No gateways available: {}'.format(netifaces.gateways()))
     except:
-        eprint('Error getting gateway mac address.')
+        eprint(NO_GATEWAY_MAC)
 
     bssid_re = re.compile(' BSSID:(\S+) ')
 
-    mac_re = re.compile('(SA|DA|BSSID):(([\dA-F]{2}:){5}[\dA-F]{2})', re.I)
+    tcpdump_mac_re = re.compile('(SA|DA|BSSID):(' + mac_re_str + ')', re.I)
     length_re = re.compile(' length (\d+)')
     client_macs = set()
     data_totals = defaultdict(int)
 
-    cmd = 'tcpdump -i {} -Ile -c {}'.format(iface, args.packets).split()
+    cmd = 'tcpdump -i {} -Ile -c {} -s 0'.format(iface, args.packets).split()
     try:
         bar_format = '{n_fmt}/{total_fmt} {bar} {remaining}'
-        for line in tqdm(run_process(cmd),
-                         total=args.packets,
-                         bar_format=bar_format):
+        progress = tqdm(run_process(cmd),
+                        total=args.packets,
+                        bar_format=bar_format)
+        for line in progress:
             line = line.decode('utf-8')
 
             # find BSSID for SSID
@@ -96,7 +114,7 @@ def main(args):
             length_match = length_re.search(line)
             if length_match:
                 length = int(length_match.group(1))
-                mac_matches = mac_re.findall(line)
+                mac_matches = tcpdump_mac_re.findall(line)
                 if mac_matches:
                     macs = set([EUI(match[1]) for match in mac_matches])
                     leftover = macs - network_macs
@@ -104,6 +122,9 @@ def main(args):
                         for mac in leftover:
                             data_totals[mac] += length
                             client_macs.add(mac)
+
+        if progress.n < progress.total:
+            eprint('Sniffing finished early, try running this script with `sudo`.')
 
     except subprocess.CalledProcessError:
         eprint('Error collecting packets.')
