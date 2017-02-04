@@ -1,5 +1,9 @@
 from __future__ import print_function
-import subprocess, re, sys, argparse, os
+import subprocess
+import re
+import sys
+import argparse
+import os
 from collections import defaultdict
 
 import netifaces
@@ -7,37 +11,42 @@ from netaddr import EUI, mac_unix_expanded
 from wireless import Wireless
 from tqdm import tqdm
 
+NO_SSID = 'No SSID is currently available. Connect to the network first.'
+
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
 def run_process(cmd, err=False):
     err_pipe = subprocess.STDOUT if err else open(os.devnull, 'w')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=err_pipe)
-    while(True):
+    while (True):
         retcode = p.poll()
         line = p.stdout.readline()
         yield line
-        if(retcode is not None):
+        if (retcode is not None):
             break
+
 
 def main(args):
     parser = argparse.ArgumentParser(
         description='Find active users on the current wireless network.')
     parser.add_argument('-p', '--packets',
-        default=1000,
-        type=int,
-        help='How many packets to capture.')
+                        default=1000,
+                        type=int,
+                        help='How many packets to capture.')
     parser.add_argument('-r', '--results',
-        default=None,
-        type=int,
-        help='How many results to show.')
+                        default=None,
+                        type=int,
+                        help='How many results to show.')
     args = parser.parse_args()
 
     try:
         wireless = Wireless()
         ssid = wireless.current()
         if ssid is None:
-            eprint('No SSID is currently available. Connect to the network first.')
+            eprint(NO_SSID)
             return
         eprint('SSID: {}'.format(ssid))
     except:
@@ -61,8 +70,6 @@ def main(args):
         eprint('Error getting gateway mac address.')
 
     bssid_re = re.compile(' BSSID:(\S+) ')
-    da_re = re.compile(' DA:(\S+) ')
-    sa_re = re.compile(' SA:(\S+) ')
 
     mac_re = re.compile('(SA|DA|BSSID):(([\dA-F]{2}:){5}[\dA-F]{2})', re.I)
     length_re = re.compile(' length (\d+)')
@@ -72,7 +79,9 @@ def main(args):
     cmd = 'tcpdump -i {} -Ile -c {}'.format(iface, args.packets).split()
     try:
         bar_format = '{n_fmt}/{total_fmt} {bar} {remaining}'
-        for line in tqdm(run_process(cmd), total=args.packets, bar_format=bar_format):
+        for line in tqdm(run_process(cmd),
+                         total=args.packets,
+                         bar_format=bar_format):
             line = line.decode('utf-8')
 
             # find BSSID for SSID
@@ -80,7 +89,7 @@ def main(args):
                 bssid_matches = bssid_re.search(line)
                 if bssid_matches:
                     bssid = bssid_matches.group(1)
-                    if not 'Broadcast' in bssid:
+                    if 'Broadcast' not in bssid:
                         network_macs.add(EUI(bssid))
 
             # count data packets
@@ -102,9 +111,9 @@ def main(args):
     except KeyboardInterrupt:
         pass
 
-    print()
-
-    totals_sorted = sorted(data_totals.items(), key=lambda x: x[1], reverse=True)
+    totals_sorted = sorted(data_totals.items(),
+                           key=lambda x: x[1],
+                           reverse=True)
 
     eprint('Total of {} user(s)'.format(len(totals_sorted)))
 
@@ -113,8 +122,10 @@ def main(args):
         if total > 0:
             print('{}\t{} bytes'.format(mac, total))
 
+
 if __name__ == '__main__':
     from sys import argv
+
     try:
         main(argv)
     except KeyboardInterrupt:
