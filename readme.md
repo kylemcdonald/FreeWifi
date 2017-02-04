@@ -2,18 +2,19 @@
 
 This short tutorial describes a few methods for gaining access to the Internet, [a basic human right](https://en.wikipedia.org/wiki/Right_to_Internet_access#2011:_UN_Special_Rapporteur_report), from public wireless networks.
 
-This tutorial has been tested on Mac, should work on Linux, and hasn't been tested on Windows.
+This tutorial has been tested on Mac and a Raspberry Pi. It should generally work on Linux, and hasn't been tested on Windows.
 
 ## Preparation
 
 Make sure you do this step *before* you are stuck without Internet access:
 
 1. Install [Python pip](https://pip.pypa.io/en/stable/installing/)
-2. Make a copy of this repository and install dependencies for the script.
+2. On Linux, run `sudo apt-get install python-dev`, a dependency for the `netifaces` package.
+2. Make a copy of this repository and install dependencies for the script:
 
 ```
 $ git clone https://github.com/kylemcdonald/FreeWifi
-$ cd FreeWifi && pip install -r requirements.txt
+$ cd FreeWifi && sudo pip install -r requirements.txt
 ```
 
 ## How to get additional time
