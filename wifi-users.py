@@ -41,6 +41,10 @@ def main(args):
                         default=None,
                         type=str,
                         help='Which wireless interface to use.')
+    parser.add_argument('-s', '--ssid',
+                        default=None,
+                        type=str,
+                        help='Which SSID to use.')
     parser.add_argument('-r', '--results',
                         default=None,
                         type=int,
@@ -48,17 +52,23 @@ def main(args):
     args = parser.parse_args()
 
     try:
-        wireless = Wireless()
-
-        ifaces = wireless.interfaces()
-        eprint('Available interfaces: {}'.format(', '.join(ifaces)))
-        iface = args.interface if args.interface else ifaces[-1]
+        if args.interface:
+            iface = args.interface
+        else:
+            wireless = Wireless()
+            ifaces = wireless.interfaces()
+            eprint('Available interfaces: {}'.format(', '.join(ifaces)))
+            iface = ifaces[-1]
         eprint('Interface: {}'.format(iface))
 
-        ssid = wireless.current()
-        if ssid is None:
-            eprint(NO_SSID)
-            return
+        if args.ssid:
+            ssid = args.ssid
+        else:
+            wireless = Wireless()
+            ssid = wireless.current()
+            if ssid is None:
+                eprint(NO_SSID)
+                return
         eprint('SSID: {}'.format(ssid))
     except:
         eprint(NO_WIRELESS)
