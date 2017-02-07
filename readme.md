@@ -14,7 +14,9 @@ Make sure you do this step *before* you are stuck without Internet access:
 
 ```
 $ git clone https://github.com/kylemcdonald/FreeWifi
-$ cd FreeWifi && sudo pip install -r requirements.txt
+$ cd FreeWifi
+$ sudo pip install pipenv
+$ pipenv lock
 ```
 
 ## How to get additional time
@@ -36,7 +38,7 @@ Note that MAC address spoofing may be interpreted as an illegal activity dependi
 
 If the network is open, but you can't get access for some reason, you can also try spoofing the MAC address of a device that is already using the network. To the router, your device and the other device will look like one device. This can cause some minor problems if they interrupt each other, but for light browsing it usually works out fine.
 
-To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. First, on Mac OS run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you need to do this again if you restart your computer). Then run the command `python wifi-users.py`. You should see a progress bar immediately:
+To find the MAC addresses of other devices using the network, first you need to connect to the network. You don't need to have Internet access, just a connection. First, on Mac OS run the command `sudo chmod o+r /dev/bpf*` once to make sure you can sniff wireless data (you need to do this again if you restart your computer). Then run the command `pipenv run python wifi-users.py`. You should see a progress bar immediately:
 
 ```
 Available interfaces: en0
