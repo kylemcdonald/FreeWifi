@@ -1,0 +1,33 @@
+{
+    "default": {
+        "tqdm": {
+            "version": "==4.11.2",
+            "hash": "sha256:1621b3476c2224045d8bd57209aab006612a46ae2cc518b4a92ad988983e4c3d"
+        },
+        "wireless": {
+            "version": "==0.3.2",
+            "hash": "sha256:e28d48a3e7e00be100be8a14c27be4f8cbde30dddecd9f6f3ffc3c03184967de"
+        },
+        "netaddr": {
+            "version": "==0.7.19",
+            "hash": "sha256:56b3558bd71f3f6999e4c52e349f38660e54a7a8a9943335f73dfc96883e08ca"
+        },
+        "netifaces": {
+            "version": "==0.10.5",
+            "hash": "sha256:59d8ad52dd3116fcb6635e175751b250dc783fb011adba539558bd764e5d628b"
+        }
+    },
+    "develop": {},
+    "_meta": {
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ],
+        "requires": {},
+        "hash": {
+            "sha256": "4bc9bce1339bcb0762bd8cbed54b84932fb7d9b3ace28db56a8fd8ae6b6a4491"
+        }
+    }
+}
