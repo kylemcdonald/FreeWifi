@@ -1,6 +1,6 @@
 # Free Wifi
 
-This short tutorial describes a few methods for gaining access to the Internet, [a basic human right](https://en.wikipedia.org/wiki/Right_to_Internet_access#2011:_UN_Special_Rapporteur_report), from public wireless networks.
+This short tutorial describes a few methods for gaining access to the Internet, [a basic human right](https://en.wikipedia.org/wiki/Right_to_Internet_access#2011:_UN_Special_Rapporteur_report), from public wireless networks which are not WPA2 encrypted but require (SMS) login for Internet access.
 
 This tutorial has been tested on Mac and a Raspberry Pi. It should generally work on Linux, and hasn't been tested on Windows.
 
